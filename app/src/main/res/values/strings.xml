@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">FetchingDataStackOverflow</string>
+    <string name="server_error_dialog_title">Server Error</string>
+    <string name="server_error_dialog_message">Communication with the server Failed</string>
+    <string name="server_error_dialog_button_caption">OK</string>
+
+</resources>

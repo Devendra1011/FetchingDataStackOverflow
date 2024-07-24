@@ -2,19 +2,23 @@ package com.example.fetchingdatastackoverflow;
 
 import com.google.gson.annotations.SerializedName;
 
+
+import java.util.Collections;
+import java.util.List;
+
 public class SingleQuestionResponseSchema {
     @SerializedName("items")
     private final List<QuestionWithBody> mQuestions;
 
 
     // constructor
-    public SingleQuestionResponseSchema(List<QuestionWithBody> mQuestions) {
-        this.mQuestions = mQuestions;
+    public SingleQuestionResponseSchema(QuestionWithBody questions) {
+        mQuestions = Collections.singletonList(questions);
     }
 
 
     // getter
-    public QuestionWithBody getmQuestions() {
+    public QuestionWithBody getQuestions() {
         return mQuestions.get(0);
     }
 }

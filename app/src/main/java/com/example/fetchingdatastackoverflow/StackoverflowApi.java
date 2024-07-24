@@ -11,7 +11,10 @@ public interface StackoverflowApi {
     Call<QuestionsListResponseSchema> lastActiveQuestions(@Query("pagesize") Integer pageSize);
 
 
-    @GET("/answers/{ids}?order=desc&sort=activity&site=stackoverflowRun")
-    Call<SingleQuestionResponseSchema> questionDetails(@Path("ids") String questionId);
+//    @GET("/answers/{ids}?order=desc&sort=activity&site=stackoverflow")
+//    Call<SingleQuestionResponseSchema> questionDetails(@Path("ids") String questionId);
 
+
+    @GET("/questions/{questionId}?site=stackoverflow&filter=withbody")
+    Call<SingleQuestionResponseSchema> questionDetails(@Path("questionId") String questionId);
 }

@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.fragment.app.FragmentManager;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -75,7 +76,7 @@ public class QuestionDetailActivity extends AppCompatActivity implements Callbac
     public void onResponse(Call<SingleQuestionResponseSchema> call, Response<SingleQuestionResponseSchema> response) {
         SingleQuestionResponseSchema questionResponseSchema;
         if (response.isSuccessful() && (questionResponseSchema = response.body()) != null ){
-            String questionBody = questionResponseSchema.getmQuestions().getmBody();
+            String questionBody = questionResponseSchema.getQuestions().getmBody();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
                 mTxtQuestionBody.setText(Html.fromHtml(questionBody,Html.FROM_HTML_MODE_LEGACY));
 
@@ -90,8 +91,7 @@ public class QuestionDetailActivity extends AppCompatActivity implements Callbac
 
     @Override
     public void onFailure(Call<SingleQuestionResponseSchema> call, Throwable t) {
-
-
-        
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction().add(ServerErrorDialogFragment.newInstance(),null).commitAllowingStateLoss();
     }
 }

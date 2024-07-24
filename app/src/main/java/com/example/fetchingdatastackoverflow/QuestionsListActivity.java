@@ -16,6 +16,9 @@ import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.fetchingdatastackoverflow.questionsList.QuestionsListViewMVCImpl;
+import com.example.fetchingdatastackoverflow.questionsList.QuestionsListViewMvc;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,13 +28,17 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class QuestionsListActivity extends AppCompatActivity implements Callback<QuestionsListResponseSchema> {
+public class QuestionsListActivity extends AppCompatActivity implements Callback<QuestionsListResponseSchema>, QuestionsListViewMvc.Listener {
 
 
-    private RecyclerView mRecyclerView;
-    private QuestionsAdapter mQuestionAdapter;
+
+
     private StackoverflowApi mStackoverflowApi;
     private Call<QuestionsListResponseSchema> mCall;
+    private QuestionsListViewMvc mViewMVC;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,43 +52,28 @@ public class QuestionsListActivity extends AppCompatActivity implements Callback
         });
 
 
-        // Initializing recyclerview
-
-        mRecyclerView = findViewById(R.id.recycler_view);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-
-        mQuestionAdapter = new QuestionsAdapter(new OnQuestionClickListener() {
-            @Override
-            public void onQuestionClicked(Question question) {
-
-                QuestionDetailActivity.start(QuestionsListActivity.this,question.getId());
-
-            }
-        });
-
-        mRecyclerView.setAdapter(mQuestionAdapter);
+        mViewMVC = new QuestionsListViewMVCImpl(LayoutInflater.from(this),null);
+        setContentView(mViewMVC.getRootView());
 
         // Initializing Retrofit
         Retrofit retrofit = new Retrofit.Builder().baseUrl(Constants.BASE_URL).addConverterFactory(GsonConverterFactory.create()).build();
         mStackoverflowApi = retrofit.create(StackoverflowApi.class);
-
-
-
-
 
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+        mViewMVC.registerListener(this);
         mCall = mStackoverflowApi.lastActiveQuestions(20);
         mCall.enqueue(this);
     }
 
     @Override
     protected void onStop() {
+
         super.onStop();
+        mViewMVC.unregisterListener(this);
         if (mCall != null){
             mCall.cancel();
         }
@@ -91,7 +83,7 @@ public class QuestionsListActivity extends AppCompatActivity implements Callback
     public void onResponse(Call<QuestionsListResponseSchema> call, Response<QuestionsListResponseSchema> response) {
         QuestionsListResponseSchema responseSchema;
         if (response.isSuccessful() && (responseSchema = response.body()) != null){
-            mQuestionAdapter.bindData(responseSchema.getQuestions());
+            mViewMVC.bindQuestions(responseSchema.getQuestions());
 
         } else {
             onFailure(call,null);
@@ -107,76 +99,11 @@ public class QuestionsListActivity extends AppCompatActivity implements Callback
 
     }
 
+    @Override
+    public void onQuestionClicked(Question question) {
 
-    // ************************* Recycler View Adapter ************************/
+        QuestionDetailActivity.start(QuestionsListActivity.this,question.getId());
 
-
-
-
-    public interface OnQuestionClickListener {
-
-        void onQuestionClicked(Question question);
 
     }
-
-    public static class QuestionsAdapter extends RecyclerView.Adapter<QuestionsAdapter.QuestionViewHolder> {
-
-
-        private final OnQuestionClickListener mOnQuestionClickListener;
-
-        private List<Question> mQuestionList = new ArrayList<>(0);
-
-
-        @NonNull
-        @Override
-        public QuestionViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_question_list_item, parent, false);
-
-            return new QuestionViewHolder(itemView);
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull QuestionViewHolder holder, int position) {
-
-
-            holder.mTitle.setText(mQuestionList.get(position).getTitle());
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mOnQuestionClickListener.onQuestionClicked(mQuestionList.get(position));
-                }
-            });
-
-        }
-
-        @Override
-        public int getItemCount() {
-            return mQuestionList.size();
-        }
-
-        // view Holder
-        public class QuestionViewHolder extends RecyclerView.ViewHolder {
-
-            public TextView mTitle;
-
-            public QuestionViewHolder(@NonNull View itemView) {
-                super(itemView);
-                mTitle = itemView.findViewById(R.id.lqli_tv_text);
-
-
-            }
-        }
-
-
-        public QuestionsAdapter(OnQuestionClickListener onQuestionClickListener) {
-            mOnQuestionClickListener = onQuestionClickListener;
-
-        }
-
-        public void bindData(List<Question> questions) {
-            mQuestionList = new ArrayList<>(questions);
-            notifyDataSetChanged();
-        }
-    }
-
 }

@@ -1,5 +1,6 @@
-package com.example.fetchingdatastackoverflow;
+package com.example.fetchingdatastackoverflow.networking;
 
+import com.example.fetchingdatastackoverflow.questions.Question;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;

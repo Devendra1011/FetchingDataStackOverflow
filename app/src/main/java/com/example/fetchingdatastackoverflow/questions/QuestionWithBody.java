@@ -1,4 +1,4 @@
-package com.example.fetchingdatastackoverflow;
+package com.example.fetchingdatastackoverflow.questions;
 
 import com.google.gson.annotations.SerializedName;
 

@@ -1,9 +1,8 @@
 package com.example.fetchingdatastackoverflow.questionsList;
 
-import com.example.fetchingdatastackoverflow.Question;
+import com.example.fetchingdatastackoverflow.questions.Question;
 
 import java.util.List;
-import java.util.Observable;
 
 public interface QuestionsListViewMvc extends ObservableViewMvc<QuestionsListViewMvc.Listener> {
 

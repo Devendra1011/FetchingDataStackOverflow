@@ -9,9 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.fetchingdatastackoverflow.Question;
-import com.example.fetchingdatastackoverflow.QuestionDetailActivity;
-import com.example.fetchingdatastackoverflow.QuestionsListActivity;
+import com.example.fetchingdatastackoverflow.questions.Question;
 import com.example.fetchingdatastackoverflow.R;
 
 import java.util.ArrayList;

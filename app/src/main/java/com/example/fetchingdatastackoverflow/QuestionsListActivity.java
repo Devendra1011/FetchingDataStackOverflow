@@ -2,25 +2,20 @@ package com.example.fetchingdatastackoverflow;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.FragmentManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.fetchingdatastackoverflow.detailsQuestion.QuestionDetailActivity;
+import com.example.fetchingdatastackoverflow.networking.QuestionsListResponseSchema;
+import com.example.fetchingdatastackoverflow.networking.StackoverflowApi;
+import com.example.fetchingdatastackoverflow.questions.Question;
 import com.example.fetchingdatastackoverflow.questionsList.QuestionsListViewMVCImpl;
 import com.example.fetchingdatastackoverflow.questionsList.QuestionsListViewMvc;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;

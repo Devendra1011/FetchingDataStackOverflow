@@ -14,7 +14,7 @@
         android:theme="@style/Theme.FetchingDataStackOverflow"
         tools:targetApi="31">
         <activity
-            android:name=".QuestionDetailActivity"
+            android:name=".detailsQuestion.QuestionDetailActivity"
             android:exported="false" />
         <activity
             android:name=".QuestionsListActivity"

@@ -1,4 +1,4 @@
-package com.example.fetchingdatastackoverflow;
+package com.example.fetchingdatastackoverflow.networking;
 
 import retrofit2.Call;
 import retrofit2.http.GET;

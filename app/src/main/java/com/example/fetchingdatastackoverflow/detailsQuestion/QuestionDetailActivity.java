@@ -18,6 +18,8 @@ import com.example.fetchingdatastackoverflow.R;
 import com.example.fetchingdatastackoverflow.ServerErrorDialogFragment;
 import com.example.fetchingdatastackoverflow.networking.SingleQuestionResponseSchema;
 import com.example.fetchingdatastackoverflow.networking.StackoverflowApi;
+import com.example.fetchingdatastackoverflow.questions.FetchQuestionDetailsUseCase;
+import com.example.fetchingdatastackoverflow.questions.QuestionWithBody;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -25,7 +27,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class QuestionDetailActivity extends AppCompatActivity implements Callback<SingleQuestionResponseSchema>,QuestionDetailViewMVC.Listener {
+public class QuestionDetailActivity extends AppCompatActivity implements QuestionDetailViewMVC.Listener, FetchQuestionDetailsUseCase.Listener {
 
 
     public static void start(Context context,String questionId){
@@ -35,14 +37,13 @@ public class QuestionDetailActivity extends AppCompatActivity implements Callbac
 
     }
 
-    public static final String EXTRA_QUESTION_ID = "EXTRA_QUESTION_ID";
-    private TextView mTxtQuestionBody;
-    private StackoverflowApi stackoverflowApi;
+    public static final String EXTRA_QUESTION_ID = "EXTRA_QUESTION_ID"; ;
     private String mQuestionId;
-    private Call<SingleQuestionResponseSchema> mCall;
-
-
     private QuestionDetailViewMVC mViewMvc;
+
+    private FetchQuestionDetailsUseCase fetchQuestionDetailsUseCase;
+
+
 
 
 
@@ -61,10 +62,9 @@ public class QuestionDetailActivity extends AppCompatActivity implements Callbac
         mViewMvc = new QuestionDetailViewMVCImpl(LayoutInflater.from(this),null);
         setContentView(mViewMvc.getRootView());
 
-        mTxtQuestionBody = findViewById(R.id.tv_answer);
 
-        Retrofit retrofit = new Retrofit.Builder().baseUrl(Constants.BASE_URL).addConverterFactory(GsonConverterFactory.create()).build();
-        stackoverflowApi = retrofit.create(StackoverflowApi.class);
+        // Networking
+        fetchQuestionDetailsUseCase = new FetchQuestionDetailsUseCase();
 
         mQuestionId = getIntent().getExtras().getString(EXTRA_QUESTION_ID);
     }
@@ -73,9 +73,8 @@ public class QuestionDetailActivity extends AppCompatActivity implements Callbac
     protected void onStart() {
         super.onStart();
         mViewMvc.registerListener(this);
-        mCall = stackoverflowApi.questionDetails(mQuestionId);
-        mCall.enqueue(this);
-
+        fetchQuestionDetailsUseCase.registerListener(this);
+        fetchQuestionDetailsUseCase.fetchQuestionDetailsAndNotify(mQuestionId);
     }
 
 
@@ -83,33 +82,20 @@ public class QuestionDetailActivity extends AppCompatActivity implements Callbac
     protected void onStop() {
         super.onStop();
         mViewMvc.unregisterListener(this);
-        if (mCall != null){
-            mCall.cancel();
-        }
+         fetchQuestionDetailsUseCase.unregisterListener(this);
+    }
+
+
+    @Override
+    public void onFetchOfQuestionDetailsSucceeded(QuestionWithBody question) {
+
+        mViewMvc.bindQuestion(question);
     }
 
     @Override
-    public void onResponse(Call<SingleQuestionResponseSchema> call, Response<SingleQuestionResponseSchema> response) {
-        SingleQuestionResponseSchema questionResponseSchema;
-
-
-        if (response.isSuccessful() && (questionResponseSchema = response.body()) != null ){
-
-            String questionBody = questionResponseSchema.getQuestions().getmBody();
-
-
-                mViewMvc.bindQuestion(questionResponseSchema.getQuestions());
-
-
-
-        }else {
-            onFailure(call,null);
-        }
-    }
-
-    @Override
-    public void onFailure(Call<SingleQuestionResponseSchema> call, Throwable t) {
+    public void onFetchOfQuestionDetailsFailed() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().add(ServerErrorDialogFragment.newInstance(),null).commitAllowingStateLoss();
+
     }
 }

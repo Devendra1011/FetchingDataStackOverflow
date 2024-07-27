@@ -26,18 +26,12 @@ import retrofit2.Retrofit;
 public class QuestionsListActivity extends BaseActivity implements QuestionsListViewMvc.Listener, FetchQuestionsListUseCase.Listener {
 
 
-
-
     private static final int NUM_OF_QUESTIONS_ID_TO_FETCH = 20;
     private QuestionsListViewMvc mViewMVC;
     private FetchQuestionsListUseCase fetchQuestionsListUseCase;
 
     // for Dialog fragments
     private DialogManager dialogManager;
-
-
-
-
 
 
     @Override
@@ -52,15 +46,14 @@ public class QuestionsListActivity extends BaseActivity implements QuestionsList
         });
 
 
-        mViewMVC = new QuestionsListViewMVCImpl(LayoutInflater.from(this),null);
+        mViewMVC = getCompositionRoot().getViewMvcFactory().newInstance(QuestionsListViewMvc.class,null);
         setContentView(mViewMVC.getRootView());
 
         // Networking
-
-        fetchQuestionsListUseCase =  getCompositionRoot().getFetchQuestionsListUseCase();
+        fetchQuestionsListUseCase = getCompositionRoot().getFetchQuestionsListUseCase();
 
         // dialog manager
-        dialogManager = getCompositionRoot().getDialogManagerFactory().newDialogManager(getSupportFragmentManager());
+        dialogManager = getCompositionRoot().getDialogManager();
 
     }
 
@@ -89,7 +82,7 @@ public class QuestionsListActivity extends BaseActivity implements QuestionsList
     @Override
     public void onFetchOfQuestionsFailed() {
 
-        dialogManager.showRetainedDialogWithId(ServerErrorDialogFragment.newInstance(),"");
+        dialogManager.showRetainedDialogWithId(ServerErrorDialogFragment.newInstance(), "");
 
 
     }
@@ -97,7 +90,7 @@ public class QuestionsListActivity extends BaseActivity implements QuestionsList
     @Override
     public void onQuestionClicked(Question question) {
 
-        QuestionDetailActivity.start(QuestionsListActivity.this,question.getId());
+        QuestionDetailActivity.start(QuestionsListActivity.this, question.getId());
 
 
     }

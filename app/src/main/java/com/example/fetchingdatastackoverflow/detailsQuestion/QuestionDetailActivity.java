@@ -56,8 +56,9 @@ public class QuestionDetailActivity extends BaseActivity implements QuestionDeta
             return insets;
         });
 
-        mViewMvc = new QuestionDetailViewMVCImpl(LayoutInflater.from(this),null);
+        mViewMvc = getCompositionRoot().getViewMvcFactory().newInstance(QuestionDetailViewMVC.class,null);
         setContentView(mViewMvc.getRootView());
+
 
 
         // Networking
@@ -68,7 +69,7 @@ public class QuestionDetailActivity extends BaseActivity implements QuestionDeta
 
 
         // dialog error
-        dialogManager = getCompositionRoot().getDialogManagerFactory().newDialogManager(getSupportFragmentManager());
+        dialogManager = getCompositionRoot().getDialogManager();
     }
 
     @Override

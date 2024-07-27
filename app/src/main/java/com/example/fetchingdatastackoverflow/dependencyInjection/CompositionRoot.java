@@ -47,6 +47,7 @@ public class CompositionRoot {
     public FetchQuestionsListUseCase getFetchQuestionsListUseCase(){
         return new FetchQuestionsListUseCase((getStackoverflowApi()));
     }
+
     public DialogManagerFactory getDialogManagerFactory(){
         return  new DialogManagerFactory();
     }

@@ -12,6 +12,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.fetchingdatastackoverflow.R;
+import com.example.fetchingdatastackoverflow.common.BaseActivity;
 import com.example.fetchingdatastackoverflow.common.DialogManager;
 import com.example.fetchingdatastackoverflow.MyApplication;
 import com.example.fetchingdatastackoverflow.common.ServerErrorDialogFragment;
@@ -22,7 +23,7 @@ import com.example.fetchingdatastackoverflow.questions.QuestionWithBody;
 
 import retrofit2.Retrofit;
 
-public class QuestionDetailActivity extends AppCompatActivity implements QuestionDetailViewMVC.Listener, FetchQuestionDetailsUseCase.Listener {
+public class QuestionDetailActivity extends BaseActivity implements QuestionDetailViewMVC.Listener, FetchQuestionDetailsUseCase.Listener {
 
 
     public static void start(Context context,String questionId){
@@ -60,15 +61,14 @@ public class QuestionDetailActivity extends AppCompatActivity implements Questio
 
 
         // Networking
-        StackoverflowApi stackoverflowApi = ((MyApplication) getApplication()).getStackoverflowApi();
-        fetchQuestionDetailsUseCase = new FetchQuestionDetailsUseCase(stackoverflowApi);
 
+        fetchQuestionDetailsUseCase =  getCompositionRoot().getFetchQuestionDetailsUseCase();
 
         mQuestionId = getIntent().getExtras().getString(EXTRA_QUESTION_ID);
 
 
         // dialog error
-        dialogManager = new DialogManager(getSupportFragmentManager());
+        dialogManager = getCompositionRoot().getDialogManagerFactory().newDialogManager(getSupportFragmentManager());
     }
 
     @Override

@@ -9,6 +9,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.example.fetchingdatastackoverflow.common.BaseActivity;
 import com.example.fetchingdatastackoverflow.common.DialogManager;
 import com.example.fetchingdatastackoverflow.common.ServerErrorDialogFragment;
 import com.example.fetchingdatastackoverflow.detailsQuestion.QuestionDetailActivity;
@@ -22,7 +23,7 @@ import java.util.List;
 
 import retrofit2.Retrofit;
 
-public class QuestionsListActivity extends AppCompatActivity implements QuestionsListViewMvc.Listener, FetchQuestionsListUseCase.Listener {
+public class QuestionsListActivity extends BaseActivity implements QuestionsListViewMvc.Listener, FetchQuestionsListUseCase.Listener {
 
 
 
@@ -56,11 +57,10 @@ public class QuestionsListActivity extends AppCompatActivity implements Question
 
         // Networking
 
-        StackoverflowApi stackoverflowApi = ((MyApplication) getApplication()).getStackoverflowApi();
-        fetchQuestionsListUseCase = new FetchQuestionsListUseCase(stackoverflowApi);
+        fetchQuestionsListUseCase =  getCompositionRoot().getFetchQuestionsListUseCase();
 
         // dialog manager
-        dialogManager = new DialogManager(getSupportFragmentManager());
+        dialogManager = getCompositionRoot().getDialogManagerFactory().newDialogManager(getSupportFragmentManager());
 
     }
 

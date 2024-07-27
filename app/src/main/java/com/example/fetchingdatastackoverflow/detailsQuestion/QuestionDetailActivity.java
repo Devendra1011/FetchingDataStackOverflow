@@ -4,28 +4,23 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.fragment.app.FragmentManager;
 
-import com.example.fetchingdatastackoverflow.Constants;
 import com.example.fetchingdatastackoverflow.R;
-import com.example.fetchingdatastackoverflow.ServerErrorDialogFragment;
-import com.example.fetchingdatastackoverflow.networking.SingleQuestionResponseSchema;
+import com.example.fetchingdatastackoverflow.common.DialogManager;
+import com.example.fetchingdatastackoverflow.MyApplication;
+import com.example.fetchingdatastackoverflow.common.ServerErrorDialogFragment;
 import com.example.fetchingdatastackoverflow.networking.StackoverflowApi;
 import com.example.fetchingdatastackoverflow.questions.FetchQuestionDetailsUseCase;
+import com.example.fetchingdatastackoverflow.questions.FetchQuestionsListUseCase;
 import com.example.fetchingdatastackoverflow.questions.QuestionWithBody;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class QuestionDetailActivity extends AppCompatActivity implements QuestionDetailViewMVC.Listener, FetchQuestionDetailsUseCase.Listener {
 
@@ -40,6 +35,7 @@ public class QuestionDetailActivity extends AppCompatActivity implements Questio
     public static final String EXTRA_QUESTION_ID = "EXTRA_QUESTION_ID"; ;
     private String mQuestionId;
     private QuestionDetailViewMVC mViewMvc;
+    private DialogManager dialogManager;
 
     private FetchQuestionDetailsUseCase fetchQuestionDetailsUseCase;
 
@@ -64,9 +60,15 @@ public class QuestionDetailActivity extends AppCompatActivity implements Questio
 
 
         // Networking
-        fetchQuestionDetailsUseCase = new FetchQuestionDetailsUseCase();
+        StackoverflowApi stackoverflowApi = ((MyApplication) getApplication()).getStackoverflowApi();
+        fetchQuestionDetailsUseCase = new FetchQuestionDetailsUseCase(stackoverflowApi);
+
 
         mQuestionId = getIntent().getExtras().getString(EXTRA_QUESTION_ID);
+
+
+        // dialog error
+        dialogManager = new DialogManager(getSupportFragmentManager());
     }
 
     @Override
@@ -94,8 +96,7 @@ public class QuestionDetailActivity extends AppCompatActivity implements Questio
 
     @Override
     public void onFetchOfQuestionDetailsFailed() {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().add(ServerErrorDialogFragment.newInstance(),null).commitAllowingStateLoss();
+        dialogManager.showRetainedDialogWithId(ServerErrorDialogFragment.newInstance(),"");
 
     }
 }

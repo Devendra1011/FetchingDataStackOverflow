@@ -1,4 +1,4 @@
-package com.example.fetchingdatastackoverflow;
+package com.example.fetchingdatastackoverflow.common;
 
 public class Constants {
     private Constants(){}

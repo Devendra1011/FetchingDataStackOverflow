@@ -8,13 +8,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.fragment.app.FragmentManager;
 
+import com.example.fetchingdatastackoverflow.common.DialogManager;
+import com.example.fetchingdatastackoverflow.common.ServerErrorDialogFragment;
 import com.example.fetchingdatastackoverflow.detailsQuestion.QuestionDetailActivity;
-import com.example.fetchingdatastackoverflow.detailsQuestion.QuestionDetailViewMVC;
-import com.example.fetchingdatastackoverflow.networking.QuestionsListResponseSchema;
 import com.example.fetchingdatastackoverflow.networking.StackoverflowApi;
-import com.example.fetchingdatastackoverflow.questions.FetchQuestionDetailsUseCase;
 import com.example.fetchingdatastackoverflow.questions.FetchQuestionsListUseCase;
 import com.example.fetchingdatastackoverflow.questions.Question;
 import com.example.fetchingdatastackoverflow.questionsList.QuestionsListViewMVCImpl;
@@ -22,11 +20,7 @@ import com.example.fetchingdatastackoverflow.questionsList.QuestionsListViewMvc;
 
 import java.util.List;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class QuestionsListActivity extends AppCompatActivity implements QuestionsListViewMvc.Listener, FetchQuestionsListUseCase.Listener {
 
@@ -36,6 +30,10 @@ public class QuestionsListActivity extends AppCompatActivity implements Question
     private static final int NUM_OF_QUESTIONS_ID_TO_FETCH = 20;
     private QuestionsListViewMvc mViewMVC;
     private FetchQuestionsListUseCase fetchQuestionsListUseCase;
+
+    // for Dialog fragments
+    private DialogManager dialogManager;
+
 
 
 
@@ -57,7 +55,12 @@ public class QuestionsListActivity extends AppCompatActivity implements Question
         setContentView(mViewMVC.getRootView());
 
         // Networking
-        fetchQuestionsListUseCase = new FetchQuestionsListUseCase();
+
+        StackoverflowApi stackoverflowApi = ((MyApplication) getApplication()).getStackoverflowApi();
+        fetchQuestionsListUseCase = new FetchQuestionsListUseCase(stackoverflowApi);
+
+        // dialog manager
+        dialogManager = new DialogManager(getSupportFragmentManager());
 
     }
 
@@ -85,8 +88,8 @@ public class QuestionsListActivity extends AppCompatActivity implements Question
 
     @Override
     public void onFetchOfQuestionsFailed() {
-        FragmentManager fragmentManager  = getSupportFragmentManager();
-        fragmentManager.beginTransaction().add(ServerErrorDialogFragment.newInstance(),null).commitAllowingStateLoss();
+
+        dialogManager.showRetainedDialogWithId(ServerErrorDialogFragment.newInstance(),"");
 
 
     }

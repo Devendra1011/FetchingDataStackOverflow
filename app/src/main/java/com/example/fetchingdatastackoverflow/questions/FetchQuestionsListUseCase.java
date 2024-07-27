@@ -3,12 +3,11 @@ package com.example.fetchingdatastackoverflow.questions;
 
 import androidx.annotation.Nullable;
 
-import com.example.fetchingdatastackoverflow.Constants;
+import com.example.fetchingdatastackoverflow.common.Constants;
 import com.example.fetchingdatastackoverflow.networking.QuestionsListResponseSchema;
 import com.example.fetchingdatastackoverflow.networking.StackoverflowApi;
 import com.example.fetchingdatastackoverflow.questionsList.BaseObservable;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -26,22 +25,20 @@ public class FetchQuestionsListUseCase extends BaseObservable<FetchQuestionsList
 
     }
 
-    private final StackoverflowApi stackoverflowApi;
+    private final StackoverflowApi mStackoverflowApi;
 
 
     @Nullable
     Call<QuestionsListResponseSchema> call;
 
 
-    public FetchQuestionsListUseCase(){
-        Retrofit retrofit = new Retrofit.Builder().baseUrl(Constants.BASE_URL).addConverterFactory(GsonConverterFactory.create()).build();
-        this.stackoverflowApi = retrofit.create(StackoverflowApi.class);
-
+    public FetchQuestionsListUseCase(StackoverflowApi stackoverflowApi){
+        mStackoverflowApi = stackoverflowApi;
     }
 
     public void fetchLastActiveQuestionsAndNotify(int numOfQuestions){
         cancelCurrentFetchIfActive();
-        call = stackoverflowApi.lastActiveQuestions(numOfQuestions);
+        call = mStackoverflowApi.lastActiveQuestions(numOfQuestions);
         call.enqueue(new Callback<QuestionsListResponseSchema>() {
             @Override
             public void onResponse(Call<QuestionsListResponseSchema> call, Response<QuestionsListResponseSchema> response) {

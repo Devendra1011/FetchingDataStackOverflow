@@ -1,4 +1,4 @@
-package com.example.fetchingdatastackoverflow;
+package com.example.fetchingdatastackoverflow.common;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -8,6 +8,8 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+
+import com.example.fetchingdatastackoverflow.R;
 
 public class ServerErrorDialogFragment extends DialogFragment {
 
